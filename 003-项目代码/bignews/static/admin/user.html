@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>文章列表</title>
+  <link rel="stylesheet" href="js/bootstrap/css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="stylesheet" href="css/iconfont.css">
+  <link rel="stylesheet" href="css/main.css">
+  <script src="js/jquery-1.12.4.min.js"></script>
+
+
+</head>
+
+<body>
+  <div class="container-fluid">
+    <div class="common_title">
+      用户信息修改
+    </div>
+    <div class="container-fluid common_con">
+      <form class="form-horizontal article_form" id="userForm">
+        <div class="form-group">
+          <label for="inputEmail3" class="col-sm-2 control-label">用户名称：</label>
+          <div class="col-sm-4">
+            <input type="text" name="username" class="form-control username" id="inputEmail1" value="李思思">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="inputEmail3" class="col-sm-2 control-label">昵称：</label>
+          <div class="col-sm-4">
+            <input type="text" name="nickname" class="form-control nickname" id="inputEmail2" value="思思">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="inputEmail3" class="col-sm-2 control-label">邮箱：</label>
+          <div class="col-sm-4">
+            <input type="text" name="email" class="form-control email" id="inputEmail3" value="lisisi@126.com">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="inputPassword3" class="col-sm-2 control-label">用户图标：</label>
+          <div class="col-sm-10">
+            <img src="images/2.jpg" alt="" class="user_pic" id="preview">
+            <input style="display: none" name="userPic" type="file" id="exampleInputFile">
+            <!-- 给label标签的for属性赋值,值是input标签的id,那这样的话点击label就相当于点击了input -->
+            <br>
+            <label for="exampleInputFile">
+              <img src="./images/uploads_icon.jpg" style="height: 50px;" alt="" >
+            </label>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="inputEmail3" class="col-sm-2 control-label">密码：</label>
+          <div class="col-sm-4">
+            <input type="password" name="password" class="form-control password" id="inputEmail4" value="12345678">
+          </div>
+        </div>
+
+
+        <div class="form-group">
+          <div class="col-sm-offset-2 col-sm-10">
+            <button type="submit" class="btn btn-success btn-edit">修改</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // 当文件域发生改变时
+$('#exampleInputFile').on('change', function() {
+    // 获取选择的文件
+    var file = this.files[0];
+    // iframe获取图片的路径
+    var imgURL = URL.createObjectURL(file);
+    // console.log(file);
+    // 给图片的src添加路径，实现图片预览功能
+    $('#preview').prop('src', imgURL);
+})
+
+// 给表单注册submit事件
+$('#userForm').on('submit', function() {
+    //  创建formData表单对象
+    var formData = new FormData(this);
+    // 发送ajax请求调用修改接口
+    $.ajax({
+        type: 'post',
+        url: 'http://localhost:8080/api/v1/admin/user/edit',
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function(response) {
+            alert('用户信息修改成功~~~')
+                // 成功，重新加载页面
+            console.log(response);
+            location.reload();
+        }
+    })
+    return false;
+})
+
+// 发送ajax请求，获取用户信息
+$.ajax({
+    type: 'get',
+    url: 'http://localhost:8080/api/v1/admin/user/detail',
+    success: function(response) {
+        console.log(response.data);
+        // 给表单元素的value值添加数据
+        $('#inputEmail1').val(response.data.username);
+        $('#inputEmail2').val(response.data.nickname);
+        $('#inputEmail3').val(response.data.email);
+        $('#inputEmail4').val(response.data.password);
+        $('#preview').prop('src', response.data.userPic)
+    }
+})
+  </script>
+</body>
+
+</html>
